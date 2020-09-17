@@ -7,4 +7,7 @@
 
 ## Operating system
 
+* [lab1 - Programmer's view, creating processes](os/os-lab1.md), [subject](os/os-lab1-subject.pdf)
+
+
 ## Web technologies
