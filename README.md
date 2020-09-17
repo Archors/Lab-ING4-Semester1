@@ -2,7 +2,8 @@
 
 ## Advanced databases
 
-* [lab1](db/db-lab1.md)
+* [lab1 - Creating a database](db/db-lab1.md)
+
 
 ## Operating system
 
