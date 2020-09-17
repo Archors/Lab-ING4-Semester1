@@ -8,6 +8,6 @@
 ## Operating system
 
 * [lab1: Programmer's view, creating processes](os/os-lab1.md) ([subject](os/os-lab1-subject.pdf))
-
+* lab2: Programming lab, memory management ([subject](os/os-lab2-subject.pdf))
 
 ## Web technologies
