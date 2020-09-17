@@ -1,4 +1,4 @@
-# Lab 1
+# Lab1: Programmer's view, creating processes
 
 [subject](os-lab1-subject.pdf)
 

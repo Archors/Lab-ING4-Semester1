@@ -1,4 +1,4 @@
-# Lab1 - Creating a database
+# Lab1: Creating a database
 
 [subject](db-lab1-subject.pdf)
 
@@ -10,7 +10,7 @@ Enrollment(_studentLastName, _studentFirstName, _courseName, finalGrade)
 ```
 
 
-###### Does your schema allows a student to be enrolled in several courses, or a course to have no enrolled student? How is this represented?
+##### Does your schema allows a student to be enrolled in several courses, or a course to have no enrolled student? How is this represented?
 * Yes, we can insert several entries for the same `Student` in `Enrollment`.
 * Yes, we can create a `Course` without using it into the `Enrollment` table.
 Those result are explained by the `Enrollment` table which contain all of the foreign keys.
