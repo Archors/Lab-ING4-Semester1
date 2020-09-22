@@ -12,3 +12,7 @@
 * Lab 2: Programming lab, memory management, [subject](os/os-lab2-subject.pdf)
 
 ## Web technologies
+
+## DevOps and SRE
+
+## Réseaux informatiques
