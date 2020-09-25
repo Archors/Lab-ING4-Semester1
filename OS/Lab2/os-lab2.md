@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
 ## Parallel Computing
 
-#### Write a program that computes the folowing expression "(a + b) * (c - d) + (e + f)" using 3 different process.
+#### Write a program that computes the folowing expression `(a + b) * (c - d) + (e + f)` using 3 different process.
 ```
 #include <stdlib.h>
 #include <stdio.h>
