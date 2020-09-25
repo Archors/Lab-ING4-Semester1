@@ -11,7 +11,6 @@
 int main(int argc, char **argv) 
 {
     int id;
-    int i;
     int *ptr;
     system("ipcs -m"); //Show stats of IPCs
     id = shmget(KEY, sizeof(int), IPC_CREAT | PERMS); //Create an IPC of 4 bytes (=sizeof int) with shared memory (=allocate shared memory) (id)
