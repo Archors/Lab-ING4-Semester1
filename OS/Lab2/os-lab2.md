@@ -1,6 +1,6 @@
 # Lab2: Programming lab, memory management
 
-[Subject](OS/Lab2/os-lab2-subject.pdf)
+[Subject](os-lab2-subject.pdf)
 
 * Create a new file : `touch myfile.c`
 * Editing a file : `nano myfile.c`
