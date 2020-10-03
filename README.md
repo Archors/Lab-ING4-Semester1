@@ -5,6 +5,7 @@
 * Lab 1: [Creating a database](DB/Lab1/db-lab1.md), [subject](DB/Lab1/db-lab1-subject.pdf)
 * Lab 2: [Advanced SQL queries](DB/Lab2/db-lab2.pdf), [subject](DB/Lab2/db-lab2-subject.pdf)
 * Lab 3: [Constraints and Triggers](DB/Lab3/db-lab3.md), [subject](DB/Lab3/db-lab3-subject.pdf)
+* Lab noté: [Advanced SQL queries](DB/LabNote1/COMBE.Antoine.FARAULT.Paul.sql), [subject](DB/LabNote1/db-labNote1-subject.pdf)
 
 
 ## Operating system
