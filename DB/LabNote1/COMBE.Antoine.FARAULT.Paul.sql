@@ -112,7 +112,8 @@ WHERE p.pid < 5;
 select 'Query 10' as '';
 -- The customers who ordered the greatest number of common products. Display 3 columns: cname1, cname2, number of common products, with cname1 < cname2
 -- Les clients ayant commandé le grand nombre de produits commums. Afficher 3 colonnes : cname1, cname2, nombre de produits communs, avec cname1 < cname2
-
+SELECT c1.cname, c2.cname, COUNT(SELECT )
+--fonctionne pas
 
 select 'Query 11' as '';
 -- The customers who ordered the largest number of products
@@ -123,30 +124,61 @@ INNER JOIN orders o
 ON c.cid = o.cid
 WHERE COUNT()
 ORDER BY COUNT()
+--fonctionne pas
 
 select 'Query 12' as '';
 -- The products ordered by all the customers living in 'France'
 -- Les produits commandés par tous les clients vivant en 'France'
-
+SELECT p.pid, p.pname, p.price, p.origin
+FROM products p
+INNER JOIN orders o
+ON o.pid = p.pid
+INNER JOIN customers c
+ON o.cid = c.cid
+WHERE c.residence = "France";
 
 select 'Query 13' as '';
 -- The customers who live in the same country customers named 'Smith' live in (customers 'Smith' not shown in the result)
 -- Les clients résidant dans les mêmes pays que les clients nommés 'Smith' (en excluant les Smith de la liste affichée)
+SELECT c1.cid, c1.cname, c1.residence
+FROM customers c1, customers c2
+WHERE c1.residence = c2.residence
+AND c1.cname != 'Smith'
+AND c2.cname = 'Smith';
 
 
 select 'Query 14' as '';
 -- The customers who ordered the largest total amount in 2014
 -- Les clients ayant commandé pour le plus grand montant total sur 2014 
-
+SELECT c.cid, c.cname, c.residence
+FROM customers c
+INNER JOIN orders o
+ON o.cid = c.cid
+ORDER BY SUM(o.quantity);
+--fonctionne pas
 
 select 'Query 15' as '';
 -- The products with the largest per-order average amount 
 -- Les produits dont le montant moyen par commande est le plus élevé
+SELECT p.pid, p.pname, p.price, p.origin
+FROM products p
+INNER JOIN orders o
+ON o.pid = p.pid
+GROUP BY p.pid
+ORDER BY o.quantity;
+--fonctionne pas
 
 
 select 'Query 16' as '';
 -- The products ordered by the customers living in 'USA'
 -- Les produits commandés par les clients résidant aux 'USA'
+SELECT p.pid, p.pname, p.price, p.origin
+FROM products p
+INNER JOIN orders o
+ON o.pid = p.pid
+INNER JOIN customers c
+ON o.cid = c.cid
+WHERE c.residence = "USA";
 
 
 select 'Query 17' as '';

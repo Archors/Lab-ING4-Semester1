@@ -48,7 +48,7 @@ insert into products values (5, 'chocolate', 7.5, 'Switzerland');
 
 -- customers
 insert into customers values (1, 'Jones', 'USA');
-insert into customers values (2, 'Blake', null);
+insert into customers values (2, 'Blake', 'Great Britain');
 insert into customers values (3, 'Dupond', 'France');
 insert into customers values (4, 'Smith', 'Great Britain');
 insert into customers values (5, 'Gupta', 'India');
