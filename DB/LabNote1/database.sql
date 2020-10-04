@@ -45,6 +45,8 @@ insert into products values (2, 'sugar', 0.75, 'India');
 insert into products values (3, 'milk', 0.6, 'France');
 insert into products values (4, 'tea', 10, 'India');
 insert into products values (5, 'chocolate', 7.5, 'Switzerland');
+insert into products values (6, 'chocolate', 15, 'France');
+insert into products values (7, 'sausage', 10, 'Great Britain');
 
 -- customers
 insert into customers values (1, 'Jones', 'USA');
@@ -54,7 +56,7 @@ insert into customers values (4, 'Smith', 'Great Britain');
 insert into customers values (5, 'Gupta', 'India');
 
 -- orders
-insert into orders values (1, 1, date '2014-12-12', 2);
+insert into orders values (1, 1, date '2014-12-12', 20);
 insert into orders values (2, 1, date '2014-12-12', 2);
 insert into orders values (3, 1, date '2014-12-12', 1);
 insert into orders values (4, 1, date '2014-12-12', 3);
