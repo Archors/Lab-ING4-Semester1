@@ -6,6 +6,7 @@
 * Lab 2: [Advanced SQL queries](DB/Lab2/db-lab2.pdf), [subject](DB/Lab2/db-lab2-subject.pdf)
 * Lab 3: [Constraints and Triggers](DB/Lab3/db-lab3.md), [subject](DB/Lab3/db-lab3-subject.pdf)
 * Lab noté: [Advanced SQL queries](DB/LabNote1/COMBE.Antoine.FARAULT.Paul.sql), [subject](DB/LabNote1/db-labNote1-subject.pdf)
+* Lab 4: [Java Database Connectivity(JDBC)](DB/Lab4/db-lab4.md), [subject](DB/Lab4/db-lab4-subject.pdf)
 
 
 ## Operating system
