@@ -13,6 +13,8 @@
 
 * Lab 1: [Programmer's view, creating processes](OS/Lab1/os-lab1.md), [subject](OS/Lab1/os-lab1-subject.pdf)
 * Lab 2: [Programming lab, memory management](OS/Lab2/os-lab2.md), [subject](OS/Lab2/os-lab2-subject.pdf)
+* Lab 3: [Process vs Threads](OS/Lab3/os-lab3.md), [subject](OS/Lab3/os-lab3-subject.pdf)
+* Lab 4: [Advanced Input Output](OS/Lab4/os-lab4.md), [subject](OS/Lab4/os-lab4-subject.pdf)
 
 ## Web technologies
 
