@@ -15,17 +15,17 @@ select 'Query 01' as '';
 -- The countries of residence the supplier had to ship products to in 2014
 -- Les pays de résidence où le fournisseur a dû envoyer des produits en 2014
 
-SELECT residence
+SELECT DISTINCT residence
 FROM customers
 NATURAL JOIN orders
-WHERE customers.cid = orders.cid
-AND YEAR(orders.odate) = 2014;
+WHERE YEAR(orders.odate) = 2014
+AND residence IS NOT NULL;
 
 
 select 'Query 02' as '';
 -- For each known country of origin, its name, the number of products from that country, their lowest price, their highest price
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
-SELECT pname, COUNT(*), MAX(price), MIN(price)
+SELECT origin, COUNT(*), MAX(price), MIN(price)
 FROM products
 GROUP BY origin;
 
@@ -33,11 +33,11 @@ GROUP BY origin;
 select 'Query 03' as '';
 -- The customers who ordered in 2014 all the products (at least) that the customers named 'Smith' ordered in 2013
 -- Les clients ayant commandé en 2014 tous les produits (au moins) commandés par les clients nommés 'Smith' en 2013
-SELECT c.cname
+SELECT DISTINCT c.cname
 FROM customers c
-NATURAL JOIN orders o1
-WHERE YEAR(o1.odate) = 2014
-AND o1.pid != ALL(
+NATURAL JOIN orders o
+WHERE YEAR(o.odate) = 2014
+AND o.pid LIKE(
     SELECT DISTINCT o.pid
     FROM orders o
     NATURAL JOIN customers c
@@ -54,11 +54,9 @@ select 'Query 04' as '';
 SELECT c.cname, p.pname, SUM(o.quantity) AS totalOrder
 FROM customers c
 NATURAL JOIN products p
-NATURAL JOIN orders o;
-WHERE o.pid = p.pid
-AND c.cid = o.cid
-GROUP BY c.cname;
--- fonctionne pas
+NATURAL JOIN orders o
+GROUP BY c.cname, p.pname
+ORDER BY c.cname, totalOrder, p.pname;
 
 
 select 'Query 05' as '';
@@ -94,16 +92,26 @@ WHERE c.residence != ALL(
 select 'Query 07' as '';
 -- The difference between 'USA' residents' per-order average quantity and 'France' residents' (USA - France)
 -- La différence entre quantité moyenne par commande des clients résidant aux 'USA' et celle des clients résidant en 'France' (USA - France)
+SELECT
+(SELECT SUM(quantity)/count(*)
+FROM orders
+NATURAL JOIN customers
+WHERE residence = 'USA') - 
+(SELECT SUM(quantity)/count(*)
+FROM orders
+NATURAL JOIN customers
+WHERE residence = 'France')
 
 
 select 'Query 08' as '';
 -- The products ordered throughout 2014, i.e. ordered each month of that year
 -- Les produits commandés tout au long de 2014, i.e. commandés chaque mois de cette année
-SELECT p.pname, o.odate AS date
-FROM products p
-NATURAL JOIN orders o
-WHERE YEAR(o.odate) = 2014
-ORDER BY MONTH(o.odate), DAYOFMONTH(o.odate);
+SELECT *, MONTH(odate)
+FROM orders
+NATURAL JOIN products
+WHERE YEAR(odate) = 2014
+GROUP BY pname, MONTH(odate);
+
 
 select 'Query 09' as '';
 -- The customers who ordered all the products that cost less than $5
