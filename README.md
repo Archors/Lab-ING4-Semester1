@@ -20,4 +20,6 @@
 
 ## DevOps and SRE
 
+* Lab 4: [Continuous testing](DevOps/Lab4/DevOps-lab4.md), [subject](DevOps/Lab4/userapi/README.md)
+
 ## Réseaux informatiques
