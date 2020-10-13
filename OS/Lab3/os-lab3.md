@@ -18,7 +18,7 @@ The first solution using threads has been benchmarked using the time function. I
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h> 
+#include <time.h>
 
 typedef struct {
   int a, b;
@@ -78,7 +78,7 @@ int main()
     data[2].b = 5;
     data[3].a = 7;
     data[3].b = 8;
-    
+
     seconds = time(NULL);
     //Creation of independant thread
     for(iterator=0 ; iterator < 65000 ; iterator++)
@@ -122,11 +122,11 @@ The first solution using process has been benchmarked using the time function. I
 #include <sys/types.h>
 #include <sys/shm.h>
 #include <sys/wait.h>
-#include <time.h> 
+#include <time.h>
 #define KEY 4567
 #define PERMS 0660
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     time_t seconds;
     int iterator = 0;
@@ -140,14 +140,14 @@ int main(int argc, char **argv)
     id2 = shmget(KEY+1, sizeof(int), IPC_CREAT | PERMS); //We change the key to avoid having a conflict with ptr
     id3 = shmget(KEY+2, sizeof(int), IPC_CREAT | PERMS);
     id4 = shmget(KEY+3, sizeof(int), IPC_CREAT | PERMS);
-    
+
 
 
     ptr = (int *) shmat(id, NULL, 0); //Attach an existing shared memory (id) to an adress space (ptr)
     ptr2 = (int *) shmat(id2, NULL, 0);
     ptr3 = (int *) shmat(id3, NULL, 0);
     ptr4 = (int *) shmat(id4, NULL, 0);
-    
+
     for(iterator = 0 ; iterator < 65000 ; iterator++)
     {
     if (fork() == 0) //Creating a child process
@@ -162,11 +162,11 @@ int main(int argc, char **argv)
             wait(NULL);
             (*ptr2) = c * d;
         }
-        
+
         (*ptr3) = e - f;
         exit(0); //Close the parent process
     }
-    else 
+    else
     { //Child
         wait(NULL); //Wait until the parent process finish
         if (fork() == 0)
@@ -180,7 +180,7 @@ int main(int argc, char **argv)
             (*ptr2) = (*ptr2) / (*ptr3);
         }
         (*ptr) = (*ptr) - (*ptr2);
-        
+
     }
     total = (*ptr) + (*ptr3);
     }
@@ -212,7 +212,7 @@ typedef struct {
   int res;
 } thread_data;
 
-clock_t times(struct tms *buf); 
+clock_t times(struct tms *buf);
 
 void *add(void *received_struct)
 {
@@ -269,7 +269,7 @@ int main()
     data[2].b = 5;
     data[3].a = 7;
     data[3].b = 8;
-    
+
     //Creation of independant thread
       pthread_create( &(thread[0]), NULL, add, &data[0]);
       pthread_create( &(thread[1]), NULL, mul, &data[1]);
@@ -295,7 +295,7 @@ int main()
   getrusage(RUSAGE_SELF, &rend);
 
   printf("%lf usec\n", (end.tms_utime+end.tms_stime-start.tms_utime-start.tms_stime)*1000000.0/sysconf(_SC_CLK_TCK));
-  
+
   printf("%ld usec\n", (rend.ru_utime.tv_sec-rstart.ru_utime.tv_sec)*1000000 +(rend.ru_utime.tv_usec-rstart.ru_utime.tv_usec)+(rend.ru_stime.tv_sec-rstart.ru_stime.tv_sec)*1000000 +(rend.ru_stime.tv_usec-rstart.ru_stime.tv_usec));
 
     return 0;
@@ -321,9 +321,9 @@ I'm now testing the same on the processes version :
 #define KEY 4567
 #define PERMS 0660
 
-clock_t times(struct tms *buf); 
+clock_t times(struct tms *buf);
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     struct tms start, end;
     struct rusage rstart, rend;
@@ -339,16 +339,16 @@ int main(int argc, char **argv)
     id2 = shmget(KEY+1, sizeof(int), IPC_CREAT | PERMS); //We change the key to avoid having a conflict with ptr
     id3 = shmget(KEY+2, sizeof(int), IPC_CREAT | PERMS);
     id4 = shmget(KEY+3, sizeof(int), IPC_CREAT | PERMS);
-    
+
 
     ptr = (int *) shmat(id, NULL, 0); //Attach an existing shared memory (id) to an adress space (ptr)
     ptr2 = (int *) shmat(id2, NULL, 0);
     ptr3 = (int *) shmat(id3, NULL, 0);
     ptr4 = (int *) shmat(id4, NULL, 0);
-    
+
     if (fork() == 0) //Creating a child process
     {//Parent
-    
+
         if (fork() == 0)
         {
             (*ptr) = a + b;
@@ -362,7 +362,7 @@ int main(int argc, char **argv)
         (*ptr3) = e - f;
         exit(0); //Close the parent process
     }
-    else 
+    else
     { //Child
         wait(NULL); //Wait until the parent process finish
         if (fork() == 0)
@@ -376,13 +376,13 @@ int main(int argc, char **argv)
             (*ptr2) = (*ptr2) / (*ptr3);
         }
         (*ptr) = (*ptr) - (*ptr2);
-        
+
     }
     total = (*ptr) + (*ptr3);
     times(&end);
     getrusage(RUSAGE_SELF, &rend);
     printf("%lf usec\n", (end.tms_utime+end.tms_stime-start.tms_utime-start.tms_stime)*1000000.0/sysconf(_SC_CLK_TCK));
-  
+
   printf("%ld usec\n", (rend.ru_utime.tv_sec-rstart.ru_utime.tv_sec)*1000000 +(rend.ru_utime.tv_usec-rstart.ru_utime.tv_usec)+(rend.ru_stime.tv_sec-rstart.ru_stime.tv_sec)*1000000 +(rend.ru_stime.tv_usec-rstart.ru_stime.tv_usec));
 
     return 0;
@@ -391,4 +391,3 @@ int main(int argc, char **argv)
 This time i obtain 456 usec.
 At first sight we could believe that processes are faster but i suspect this function to not count the other processes.
 In order to find the same results as the first test i tried `getrusage(RUSAGE_CHILDREN, &rend);` in the processes program but it kept giving me negative results(aproximately -1500). I also tried `getrusage(RUSAGE_THREAD, &rstart);` but it gave me some high result (aproximately 4200) much higher than `getrusage(RUSAGE_SELF, &rstart);` so i did not understand how to have proper results on these tests.
-
