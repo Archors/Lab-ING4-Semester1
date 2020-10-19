@@ -13,6 +13,6 @@ int main() {
   for (i = 0; i < 10; i++) {
     int nb;
     nb = read(STDIN_FILENO, buf, 100); //Read the user input
-    printf("nwrites = %d\terror = %d\n", nb, errno);
+    printf("nwrites = %d\terror = %d\n", nb, errno); //print the number of character and errors
   }
 }

@@ -108,4 +108,4 @@ int main() {
   }
 }
 ```
-When i uncomment the line with `fcntl` the program doesn't wait for input
+When i uncomment the line with `fcntl` the program doesn't wait for input and print 10 errors. This is due to the `fcntl` that put the `STDIN_FILENO` (input) into a `0_NONBLOCK` (can't be put in wait queue).
