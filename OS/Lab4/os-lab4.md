@@ -51,10 +51,6 @@ A pipe is a connection between two processes (ex: standard output of one process
 int main(int argc, char *argv[]) {
   int pipefd[2];
   pid_t cpid;
-  if (argc != 2) {
-    fprintf(stderr, "Usage: %s <string>\n", argv[0]);
-    exit(EXIT_FAILURE);
-  }
   if (pipe(pipefd) == -1) {
     perror("pipe");
     exit(EXIT_FAILURE);
@@ -83,6 +79,17 @@ int main(int argc, char *argv[]) {
   }
 }
 ```
+The output of this program is :
+```
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0 167956  7604 ?        Ss   oct.16   0:30 /sbin/init s
+root           2  0.0  0.0      0     0 ?        S    oct.16   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   oct.16   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<   oct.16   0:00 [rcu_par_gp]
+root           6  0.0  0.0      0     0 ?        I<   oct.16   0:00 [kworker/0:0
+root           9  0.0  0.0      0     0 ?        I<   oct.16   0:00 [mm_percpu_w
+...
+```
 
 #### 3. Non-Blocking Calls
 
@@ -100,7 +107,7 @@ int main() {
   int i;
   char buf[100];
   // ouvrir un le stdin en lecture non bloquante
-  fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK); //Set the stdin status flag to 0_NONBLOCK (it can't be stoped)
+  //fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK); //Set the stdin status flag to 0_NONBLOCK (it can't be stoped)
   for (i = 0; i < 10; i++) {
     int nb;
     nb = read(STDIN_FILENO, buf, 100); //Read the user input
@@ -108,4 +115,44 @@ int main() {
   }
 }
 ```
+Output of this program
+```
+./nbcall 
+vkjdb
+nwrites = 6	error = 0
+gnfdn
+nwrites = 6	error = 0
+fsfb
+nwrites = 5	error = 0
+scqv
+nwrites = 5	error = 0
+vdbfh
+nwrites = 6	error = 0
+svdvsd
+nwrites = 7	error = 0
+vsdvsdb
+nwrites = 8	error = 0
+dvsdbsd
+nwrites = 8	error = 0
+vdsvdv
+nwrites = 7	error = 0
+vdsvds
+nwrites = 7	error = 0
+```
+
 When i uncomment the line with `fcntl` the program doesn't wait for input and print 10 errors. This is due to the `fcntl` that put the `STDIN_FILENO` (input) into a `0_NONBLOCK` (can't be put in wait queue).
+
+Output when uncommented :
+```
+./nbcall
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+nwrites = -1	error = 11
+```
