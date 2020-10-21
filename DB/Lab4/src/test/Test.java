@@ -8,7 +8,10 @@ public class Test {
 	  String url = "jdbc:mysql://localhost:3306/company";
 	  String username = "root";
 	  String pwd = "";
-	  DataAccess data = new DataAccess(url, username,pwd );	 
+	  DataAccess data = new DataAccess(url, username,pwd);	 
+	  data.getCommitMode();
+	  data.getTransactionLevel();
+	  //data.printEmployeePS();
 	  data.close();
   }
 }

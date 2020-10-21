@@ -26,6 +26,34 @@ public class DataAccess {
 	    	System.err.println("Connexion problem");
 	  }
   }
+  
+  public int getCommitMode()
+  {
+	  try {
+		  if(conn.getAutoCommit()){
+			  System.out.println(1);
+			  return 1;
+		  }
+		  else {
+			  System.out.println(1);
+			  return 0;
+		  }
+	  }catch(SQLException ex) {
+		  ex.printStackTrace();
+	  }
+	  return 2;
+  }
+  
+  public int getTransactionLevel()
+  {
+	  try {
+		  System.out.println(conn.getTransactionIsolation());
+		  return conn.getTransactionIsolation();
+	  }catch(SQLException ex) {
+		  ex.printStackTrace();
+	  }
+	  return 10;
+  }
 
   
   public List<EmployeeInfo> getEmployee()
@@ -35,7 +63,7 @@ public class DataAccess {
 		  Statement stmt = conn.createStatement();
 		  ResultSet rs = stmt.executeQuery("SELECT * FROM emp");
 		  while(rs.next()) {
-			  returnList.add(new EmployeeInfo(rs.getInt(1),rs.getString(1), rs.getFloat(2)));
+			  returnList.add(new EmployeeInfo(rs.getInt(1),rs.getString(2), rs.getFloat(6)));
 		  }
 		  }catch(SQLException ex) {
 			  System.err.println("The query isn't possible");
@@ -62,7 +90,7 @@ public class DataAccess {
 		  PreparedStatement prep = conn.prepareStatement("SELECT * FROM emp");
 		  ResultSet rs = prep.executeQuery();
 		  while(rs.next()) {
-			  returnList.add(new EmployeeInfo(rs.getInt(1),rs.getString(1), rs.getFloat(2)));
+			  returnList.add(new EmployeeInfo(rs.getInt(1),rs.getString(2), rs.getFloat(6)));
 		  }
 		  }catch(SQLException ex) {
 			  System.err.println("The query isn't possible");
@@ -96,7 +124,7 @@ public class DataAccess {
 	  		  		+ " AND     (DNAME ="+name+" OR "+name+" IS NULL)"
 	  		  		+ " AND     (DLOC ="+location+" OR "+location+" IS NULL)");
   		  while(rs.next()) {
-  			  returnList.add(new DepartmentInfo(rs.getInt(1),rs.getString(1), rs.getString(2)));
+  			  returnList.add(new DepartmentInfo(rs.getInt(1),rs.getString(2), rs.getString(3)));
   		  }
   		  }catch(SQLException ex) {
   			  System.err.println("The query isn't possible");
@@ -121,7 +149,7 @@ public class DataAccess {
   		  prep.setString(3, location);
   		  prep.setString(4, location);
   		  while(rs.next()) {
-  			  returnList.add(new DepartmentInfo(rs.getInt(1),rs.getString(1), rs.getString(2)));
+  			  returnList.add(new DepartmentInfo(rs.getInt(1),rs.getString(2), rs.getString(3)));
   		  }
   		  }catch(SQLException ex) {
   			  System.err.println("The query isn't possible");
@@ -155,6 +183,21 @@ public class DataAccess {
 	  		System.err.println("The query isn't possible");
 	  	}
 	  	return returnList;
+  }
+  
+  public void printEmployeePS()
+  {
+	  try {
+		  PreparedStatement prep = conn.prepareStatement("SELECT * FROM emp");
+		  ResultSet rs = prep.executeQuery();
+		  while(rs.next()) {
+			  System.out.print("ID = ");
+			  System.out.println(rs.getInt(1));
+			  System.out.println("Name = " + rs.getString(2) + "/nSalary = " + rs.getFloat(6));
+		  }
+		  }catch(SQLException ex) {
+			  ex.printStackTrace();
+		  }
   }
 
 }
