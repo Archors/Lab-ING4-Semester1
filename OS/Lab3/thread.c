@@ -1,7 +1,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h> 
+#include <time.h>
 
 typedef struct {
   int a, b;
@@ -48,7 +48,7 @@ int main()
 
     for(j=0;j<8;j++)
     {
-      data[j].a=0;
+      data[j].a=0;rk
       data[j].b=0;
       data[j].res=0;
 
@@ -61,7 +61,7 @@ int main()
     data[2].b = 5;
     data[3].a = 7;
     data[3].b = 8;
-    
+
     seconds = time(NULL);
     //Creation of independant thread
     for(iterator=0 ; iterator < 65000 ; iterator++)
