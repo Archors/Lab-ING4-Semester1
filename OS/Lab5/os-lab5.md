@@ -1,6 +1,6 @@
 # Lab5: Interprocess Synchronization
 
-[Subject](os-lab()-subject.pdf)
+[Subject](os-lab5-subject.pdf)
 
 * Running a file : `gcc -pthread -o semaphore semaphore.c`
 * Then use `./execName` to display results.
@@ -13,21 +13,7 @@ possible errors.
 
 1. Using two tasks, create a shared variable ‘i’ and initialize it 65; one task should increment the variable and the other one should decrement it
 
-I started by trying multiple tasks with processes but i didn't had any issue with this code :
-```
-int main(int argc, char *argv[]) {
-  int i = 65;
-  if(fork())
-  {
-    i++;
-  }
-  else{
-    i--;
-  }
-  printf("%d\n", i);
-}
-```
-So i changed it using threads :
+I started by trying multiple tasks with processes but i didn't seem to had any issue with this code however i realize that when i start this program a high number of times i get strange result `65`, `66` and even `64`. We can see that there is a race problem, we can't be sure wich thread is going to finish his task first leading to unexpected results.
 ```
 #include <pthread.h>
 #include <stdio.h>
@@ -54,11 +40,9 @@ int main(int argc, char *argv[]) {
   pthread_create( &(thread[1]), NULL, decrement, &i);
   printf("%d\n",i);
   pthread_join(thread[0], NULL);
-  printf("%d\n",i);
   pthread_join(thread[1], NULL);
 }
 ```
-With this program i was getting multiple output : `65 66`, `66 65` and even `65 65`. We can see that there is a race problem, we can't be sure wich thread is going to finish his task first leading to unexpected results.
 
 2. Explain why the following code could lead to an error.
 ```
@@ -68,7 +52,7 @@ sleep(for_some_time);
 // depending on the task
 i = Reg;
 ```
-This code could lead to an error because ...
+This code could lead to an error because if the data is accessed by 2 process/thread at the same time the result would not be good.
 
 #### 2-  Solving the Problem : Synchronizing access using semaphores
 
@@ -300,5 +284,87 @@ int main(int argc, char *argv[]) {
 * T4 waits for the remaining task to end and does the final calculation then displays the result
 
 ```
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#include <unistd.h>
 
+sem_t finish;
+sem_t order;
+
+typedef struct
+{
+  int a, b, c, d, e, f;
+  int order;
+  int tab[3];
+  int result;
+} thread_data;
+
+void *T1(void *received_struct)
+{
+  thread_data *data = (thread_data *)received_struct;
+  int temp = data->a + data->b;
+  sem_wait(&order);              //Part of code that can't be accessed  by multiple threads at the same time
+  data->tab[data->order] = temp; //The first available spot in the array is filled by the result
+  (data->order)++;               //Increase to know the new first available spot
+  sem_post(&order);              //Release of this part
+  sem_post(&finish);             //Tell others threads that the calculation is complete
+  pthread_exit(EXIT_SUCCESS);
+}
+
+void *T2(void *received_struct)
+{
+  thread_data *data = (thread_data *)received_struct;
+  int temp = data->c + data->d;
+  sem_wait(&order);
+  data->tab[data->order] = temp;
+  (data->order)++;
+  sem_post(&order);
+  sem_post(&finish);
+  pthread_exit(EXIT_SUCCESS);
+}
+
+void *T3(void *received_struct)
+{
+  thread_data *data = (thread_data *)received_struct;
+  int temp = data->e + data->f;
+  sem_wait(&order);
+  data->tab[data->order] = temp;
+  (data->order)++;
+  sem_post(&order);
+  sem_post(&finish);
+  pthread_exit(EXIT_SUCCESS);
+}
+
+void *T4(void *received_struct)
+{
+  thread_data *data = (thread_data *)received_struct;
+  int temp;
+  sem_wait(&finish);                  //Wait for the first thread to finish
+  sem_wait(&finish);                  //wait for the second thread to finish
+  temp = data->tab[0] * data->tab[1]; //Calculation
+  sem_wait(&finish);                  //Wait for the last thread to finish
+  data->result = temp * data->tab[2]; //Complete calculation
+  pthread_exit(EXIT_SUCCESS);
+}
+
+int main(int argc, char *argv[])
+{
+  pthread_t thread[4];
+  thread_data data;
+  data.order = 0;
+  //Creating semaphore
+  sem_init(&order, 0, 0);
+  sem_init(&finish, 0, 0);
+  pthread_create(&(thread[0]), NULL, T1, &data);
+  pthread_create(&(thread[1]), NULL, T2, &data);
+  pthread_create(&(thread[2]), NULL, T3, &data);
+  pthread_create(&(thread[3]), NULL, T4, &data);
+  pthread_join(thread[0], NULL);
+  pthread_join(thread[1], NULL);
+  pthread_join(thread[2], NULL);
+  pthread_join(thread[3], NULL);
+}
 ```
