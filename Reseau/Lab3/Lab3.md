@@ -1,9 +1,9 @@
 # Lab3: Computer Networks
 
-[Subject](os-lab()-subject.pdf)
+[Subject](Reseau-lab3-subject.pdf)
 
-* Running a file : `gcc -g webserver webserver.c`
-* Then use `./execName` to display results.
+* Running a file : `gcc -o labserver labserver.c`
+* Then use `./execName` to run the server.
 
 #### 1-  Objective
 
@@ -18,190 +18,130 @@ should be zipped in one file. Please propose a small html file.
 #### 2-  Web server
 
 1. Explain why we are using the library `<netinet/in.h >`
+
 `<netinet/in.h >` is an internet protocol family, we are using it to include the `sockaddr` structure or to use `in_` that are defined with `typedef`.
 
 2. Add the following line: `return EXIT_SUCCESS`, compile and execute the server code. What is the required Linux command line and the name of the Compiler.
-The command line to compile is `gcc -g webserver webserver.c` and the command line to execute is `./webserver`
 
-##### What if we had more than two processes ? Is there something else to do to enforce mutual exclusion ? Explain and experiment using three processes.
+The command line to compile is `gcc -o webserver webserver.c` and the command line to execute is `./webserver`. The compiler's name is GCC.
 
-If there are more than two processes we can't be sure which one of the three we can enforce mutual exclusion by adding empty/full.
+3. What would be the suitable domain in our case the domain, the type and the port number?
+
+We are using `AF_INET` to use an IPV4 adress, `SOCK_STREAM` to use TCP and finally we can use the port 8080, port used for a service.
 ```
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <fcntl.h>
-#include <semaphore.h>
-
-
-sem_t *empty;
-sem_t *full;
-
-void *increment(void *received_data)
-{
-  sem_wait(&empty);
-  int *data = (int*) received_data;
-  (*data)++;
-  sem_post(&full);
-  pthread_exit(EXIT_SUCCESS);
-}
-
-void *decrement(void *received_data)
-{
-  sem_wait(&full);
-  int *data = (int*) received_data;
-  (*data)++;
-  sem_post(&full);
-  pthread_exit(EXIT_SUCCESS);
-}
-void *multiple(void *received_data)
-{
-  sem_wait(&full);
-  int *data = (int*) received_data;
-  (*data)*2;
-  sem_post(&full);
-  pthread_exit(EXIT_SUCCESS);
-}
-
-int main(int argc, char *argv[]) {
-  pthread_t thread[3];
-  //Creating semaphore
-  sem_init(&empty,0,1);
-  sem_init(&full,0,0);  
-
-  int i = 65;
-  pthread_create( &(thread[0]), NULL, increment, &i);
-  pthread_create( &(thread[1]), NULL, decrement, &i);
-  pthread_create( &(thread[2]), NULL, decrement, &i);
-  printf("%d\n",i);
-  pthread_join(thread[0], NULL);
-  printf("%d\n",i);
-  pthread_join(thread[1], NULL);
-  pthread_join(thread[2], NULL);
-}
+hints.ai_family = AF_INET;
+hints.ai_socktype = SOCK_STREAM;
+...
+getaddrinfo(0, "8080", &hints, &bind_address);
 ```
 
-2. A deadlock is a situation in which a process is waiting for some resource held by another
-process waiting for it to release another resource, thereby forming a loop of blocked
-processes ! Use semaphores to force a deadlock situation using three processes.
+4. Complete the instruction of line 37.
+
+```
+if (!ISVALIDSOCKET(socket_listen))
+    {
+        fprintf(stderr, "socket() failed. (%d)\n", GETSOCKETERRNO());
+        return 1;
+    }
+```
+
+5. Add the source code to manage the error of the binding function.
+
+```
+if (bind(socket_listen, bind_address->ai_addr, bind_address->ai_addrlen))
+    {
+        fprintf(stderr, "bind() failed. (%d)\n", GETSOCKETERRNO());
+        return 1;
+    }
+```
+
+6. Here you should add your code to manage the error of socket listening.
+
+```
+if (listen(socket_listen, 10) < 0)
+    {
+        fprintf(stderr, "listen() failed. (%d)\n", GETSOCKETERRNO());
+        return 1;
+    }
+```
+
+#### 3-  Connection test
+
+7. Now, you will surround your accept function call by an infinite while loop (a server program should never quit until it is interrupted). Add the following code to make your server program able to serve an `index.html` file through the HTTP protocol. The `index.html` could be the simple html file.
 
 ```
 #include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <fcntl.h>
-#include <semaphore.h>
+#include <time.h>
+#include <string.h>
 
-sem_t first;
-sem_t second;
-sem_t third;
-
-void *increment(void *received_data)
-{
-  sem_wait(&second);
-  int *data = (int*) received_data;
-  (*data)++;
-  sem_post(&first);
-  pthread_exit(EXIT_SUCCESS);
-}
-
-void *decrement(void *received_data)
-{
-  sem_wait(&third);
-  int *data = (int*) received_data;
-  (*data)++;
-  sem_post(&second);
-  pthread_exit(EXIT_SUCCESS);
-}
-void *multiple(void *received_data)
-{
-  sem_wait(&first);
-  int *data = (int*) received_data;
-  (*data)*2;
-  sem_post(&third);
-  pthread_exit(EXIT_SUCCESS);
-}
-
-int main(int argc, char *argv[]) {
-  pthread_t thread[3];
-  //Creating semaphore
-  sem_init(&first,0,0);
-  sem_init(&second,0,0);
-  sem_init(&third,0,0);
-  int i = 65;
-  pthread_create( &(thread[0]), NULL, increment, &i);
-  pthread_create( &(thread[1]), NULL, decrement, &i);
-  pthread_create( &(thread[2]), NULL, multiple, &i);
-  printf("%d\n",i);
-  pthread_join(thread[0], NULL);
-  printf("%d\n",i);
-  pthread_join(thread[1], NULL);
-  pthread_join(thread[2], NULL);
-}
-```
-
-Here we have a deadlock situation, each thread is waiting for another thread to complete his task (1 waiting for 2 ; 2 waiting for 3 ; 3 waiting for 1).
-
-3. Use semaphores to run 3 different applications (firefox, emacs, vi) in a predefined sequence
-no matter in which order they are launched.
-
-```
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <fcntl.h>
-#include <semaphore.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
 
-sem_t first;
-sem_t second;
-sem_t third;
+#define ISVALIDSOCKET(s) ((s) >= 0)
+#define CLOSESOCKET(s) close(s)
+#define SOCKET int
+#define GETSOCKETERRNO() (errno)
 
-void *vim()
+int main()
 {
-  system("/usr/bin/vim");
-  sem_post(&first);
-  pthread_exit(EXIT_SUCCESS);
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+    struct addrinfo *bind_address;
+    getaddrinfo(0, "8080", &hints, &bind_address);
+    printf("Creating socket...\n");
+    SOCKET socket_listen;
+    socket_listen = socket(bind_address->ai_family,
+                           bind_address->ai_socktype,
+                           bind_address->ai_protocol);
+    if (!ISVALIDSOCKET(socket_listen))
+    {
+        fprintf(stderr, "socket() failed. (%d)\n", GETSOCKETERRNO());
+        return 1;
+    }
+    //Binding
+    printf("Binding socket to local address...\n");
+    if (bind(socket_listen, bind_address->ai_addr, bind_address->ai_addrlen))
+    {
+        fprintf(stderr, "bind() failed. (%d)\n", GETSOCKETERRNO());
+        return 1;
+    }
+    int file;
+    char buf[BUFSIZ];
+    int size;
+
+    while (1)
+    {
+        //Listening
+        listen(socket_listen, 0);
+        //Acceptance
+        SOCKET socket_client = accept(socket_listen, NULL, NULL);
+        if (!ISVALIDSOCKET(socket_client))
+        {
+            fprintf(stderr, "accept() failed. (%d)\n", GETSOCKETERRNO());
+            return 1;
+        }
+        size = read(socket_client, buf, BUFSIZ);
+        write(1, buf, size);
+        if ((file = open("index.html", O_RDONLY)) == -1)
+        {
+            printf("No existing file name `index.html`\n");
+            return (1);
+        }
+        size = sprintf(buf, "HTTP/1.1 200 OK\n\n");
+        size += read(file, buf + size, BUFSIZ);
+        write(1, buf, size);
+        write(socket_client, buf, size);
+        close(socket_client);
+        close(file);
+    }
 }
-
-void *firefox()
-{
-  sem_wait(&first);
-  system("/usr/bin/firefox");
-  sem_post(&second);
-  pthread_exit(EXIT_SUCCESS);
-}
-
-void *emacs()
-{
-  sem_wait(&second);
-  system("/usr/bin/emacs");
-  pthread_exit(EXIT_SUCCESS);
-}
-
-int main(int argc, char *argv[]) {
-  pthread_t thread[3];
-  //Creating semaphore
-  sem_init(&first,0,0);
-  sem_init(&second,0,0);
-  sem_init(&third,0,0);
-
-  pthread_create( &(thread[0]), NULL, vim, NULL);
-  pthread_create( &(thread[1]), NULL, firefox, NULL);
-  pthread_create( &(thread[2]), NULL, emacs, NULL);
-  pthread_join(thread[0], NULL);
-  pthread_join(thread[1], NULL);
-  pthread_join(thread[2], NULL);
-}
-```
-
-4. Use sempahores to implement the following parallelized calculation `(a+b)*(c-d)*(e+f)`
-* T1 runs `(a+b)` and stores the result in a shared table (1st available spot)
-* T2 runs `(c+d)` and stores the result in a shared table (1st available spot)
-* T3 runs `(e+f)` and stores the result in a shared table (1st available spot)
-* T4 waits for two tasks to end and does the corresponding calculation
-* T4 waits for the remaining task to end and does the final calculation then displays the result
-
-```
-
 ```
